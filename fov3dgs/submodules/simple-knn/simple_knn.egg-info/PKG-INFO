@@ -1,3 +1,6 @@
-Metadata-Version: 2.1
-Name: simple-knn
-Version: 0.0.0
+Metadata-Version: 2.4
+Name: simple_knn
+Version: 0.1.0
+Summary: A CUDA extension built with PyTorch and uv
+Requires-Python: >=3.12
+Requires-Dist: torch>=2.0.0

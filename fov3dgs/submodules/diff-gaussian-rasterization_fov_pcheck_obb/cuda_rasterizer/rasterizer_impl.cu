@@ -30,6 +30,8 @@ namespace cg = cooperative_groups;
 #include "forward.h"
 #include "backward.h"
 
+typedef unsigned int uint;
+
 
 
 // Forward method for converting the input spherical harmonics

@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "torch>=2.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diff-gaussian-rasterization-pcheck-obb-sum"
+version = "0.1.0"
+description = "A CUDA extension built with PyTorch and uv"
+requires-python = ">=3.12"
+dependencies = ["torch>=2.0.0"]

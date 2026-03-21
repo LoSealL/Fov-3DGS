@@ -1,0 +1,58 @@
+[project]
+name = "fov3dgs"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "diff-gaussian-rasterization",
+    "diff-gaussian-rasterization-pcheck-obb",
+    "diff-gaussian-rasterization-pcheck-obb-max",
+    "diff-gaussian-rasterization-pcheck-obb-sum",
+    "diff-gaussian-rasterization-pcheck-obb-loss-weighted-max-count",
+    "diff-gaussian-rasterization-fov-pcheck-obb",
+    "matplotlib>=3.10.8",
+    "numpy>=2.4.2",
+    "odak>=0.2.6",
+    "opencv-python>=4.13.0.92",
+    "pillow>=12.1.1",
+    "plyfile>=1.1.3",
+    "scipy>=1.16.3",
+    "simple-knn>=1.1.6",
+    "torch>=2.10.0",
+    "torchvision>=0.21.0",
+    "tqdm>=4.67.3",
+    "loguru>=0.7.3",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cuda130"}
+testcudaext = { workspace = true }
+diff-gaussian-rasterization = { workspace = true }
+diff-gaussian-rasterization-pcheck-obb = { workspace = true }
+diff-gaussian-rasterization-pcheck-obb-max = { workspace = true }
+diff-gaussian-rasterization-pcheck-obb-sum = { workspace = true }
+diff-gaussian-rasterization-pcheck-obb-loss-weighted-max-count = { workspace = true }
+diff-gaussian-rasterization-fov-pcheck-obb = { workspace = true }
+simple-knn = { workspace = true }
+
+[[tool.uv.index]]
+name = "pytorch-cuda130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cuda131"
+url = "https://download.pytorch.org/whl/cu131"
+explicit = true
+
+[tool.uv.workspace]
+members = [
+    "submodules/diff-gaussian-rasterization",
+    "submodules/diff-gaussian-rasterization_fov_pcheck_obb",
+    "submodules/diff-gaussian-rasterization_pcheck_obb",
+    "submodules/diff-gaussian-rasterization_pcheck_obb_max",
+    "submodules/diff-gaussian-rasterization_pcheck_obb_sum",
+    "submodules/diff-gaussian-rasterization_pcheck_obb_loss_weighted_max_count",
+    "submodules/simple-knn",
+]

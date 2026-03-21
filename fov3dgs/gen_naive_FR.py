@@ -3,40 +3,36 @@
 # GRAPHDECO research group, https://team.inria.fr/graphdeco
 # All rights reserved.
 #
-# This software is free for non-commercial, research and evaluation use 
+# This software is free for non-commercial, research and evaluation use
 # under the terms of the LICENSE.md file.
 #
 # For inquiries contact  george.drettakis@inria.fr
 #
 
 import os
+from argparse import ArgumentParser
+
 import torch
-from random import randint
-from utils.loss_utils import l1_loss, ssim
+from loguru import logger
+
 # from gaussian_renderer import render, network_gui
-import sys
-from scene import Scene, GaussianModel
-from utils.general_utils import safe_state
-import uuid
-from tqdm import tqdm
-from utils.image_utils import psnr
-from argparse import ArgumentParser, Namespace
-from arguments import ModelParams, PipelineParams, OptimizationParams
-import torch.nn.functional as F
-import math
+from scene import GaussianModel
+
 try:
     from torch.utils.tensorboard import SummaryWriter
+
     TENSORBOARD_FOUND = True
 except ImportError:
     TENSORBOARD_FOUND = False
+
 
 def compose(ply_paths, trial_name):
     os.makedirs(trial_name, exist_ok=True)
     sh_degree = 3
 
     for i, path in enumerate(ply_paths):
-        print ("Processing: ", i)
-        if (i == 0):
+        logger.info("Processing: ", i)
+        if i == 0:
             gaussian_finest = GaussianModel(sh_degree)
             gaussian_finest.load_ply(path)
             gaussian_finest.init_index()
@@ -49,19 +45,17 @@ def compose(ply_paths, trial_name):
             gaussian.load_ply_index(path)
             snum = gaussian.get_xyz.shape[0]
 
-            sampled_idx = current_sampled_idx[:snum]    
+            sampled_idx = current_sampled_idx[:snum]
             highest_levels[sampled_idx] = i
             current_sampled_idx = sampled_idx
-
-
 
     # import ipdb; ipdb.set_trace()
     torch.save(highest_levels, os.path.join(trial_name, "highest_levels.pth"))
 
-    
 
 def generate_ply_path(base, arg1, arg2, arg3, arg4):
     return f"{base}{arg1}_{arg2}-{arg3}_{args.layer_num}_{args.metric}/point_cloud/iteration_{arg4}/point_cloud.ply"
+
 
 if __name__ == "__main__":
     # Set up command line argument parser
@@ -76,7 +70,7 @@ if __name__ == "__main__":
     # get sqrt of max pooling size
     sqrt_max_pooling_size = args.max_pooling_size**0.5
     # get interval according to layernum
-    interval = float( (sqrt_max_pooling_size-1) / (args.layer_num -1))
+    interval = float((sqrt_max_pooling_size - 1) / (args.layer_num - 1))
 
     # generate layernum psizes
     psizes = []
@@ -85,20 +79,31 @@ if __name__ == "__main__":
         pooling_size = round(pooling_size**2)
         psizes.append(pooling_size)
 
-    PS1_path = args.folder_base + f"1_PS1_{args.layer_num}_{args.max_pooling_size}/point_cloud/iteration_55000/point_cloud.ply"
-    arg2_values = [6000] * (args.layer_num-1)
-    arg3_values = [1500] * (args.layer_num-1)
-    arg4_values = [7500] * (args.layer_num-1)
+    PS1_path = (
+        args.folder_base
+        + f"1_PS1_{args.layer_num}_{args.max_pooling_size}/point_cloud/iteration_55000/point_cloud.ply"
+    )
+    arg2_values = [6000] * (args.layer_num - 1)
+    arg3_values = [1500] * (args.layer_num - 1)
+    arg4_values = [7500] * (args.layer_num - 1)
     # geneate 10 ply paths
     ply_paths = []
     ply_paths.append(PS1_path)
-    for i in range(args.layer_num-1):
-        ply_paths.append(generate_ply_path(args.folder_base, psizes[i+1], arg2_values[i], arg3_values[i], arg4_values[i]))
+    for i in range(args.layer_num - 1):
+        ply_paths.append(
+            generate_ply_path(
+                args.folder_base,
+                psizes[i + 1],
+                arg2_values[i],
+                arg3_values[i],
+                arg4_values[i],
+            )
+        )
 
-
-
-
-    compose(ply_paths, args.folder_base + f"all_shared_fr_{args.layer_num}_{args.max_pooling_size}")
+    compose(
+        ply_paths,
+        args.folder_base + f"all_shared_fr_{args.layer_num}_{args.max_pooling_size}",
+    )
 
     # All done
-    print("\nTraining complete.")
+    logger.info("\nTraining complete.")

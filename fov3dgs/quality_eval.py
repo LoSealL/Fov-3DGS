@@ -1,18 +1,18 @@
+import json
 import os
 import subprocess
-import json
-import pickle
-import matplotlib.pyplot as plt
-from argparse import ArgumentParser
-os.environ['MKL_THREADING_LAYER'] = 'GNU'
+
+os.environ["MKL_THREADING_LAYER"] = "GNU"
 
 
 def run_command(command):
     """Run a shell command and wait for it to complete."""
     subprocess.run(command, shell=True, check=True)
+
+
 def load_json(filepath):
     """Load JSON data from a file."""
-    with open(filepath, 'r') as file:
+    with open(filepath, "r") as file:
         return json.load(file)
 
 
@@ -59,6 +59,7 @@ for metric in metrics:
     all_metrics["tat"][metric] = []
     all_metrics["db"][metric] = []
 
+
 def main():
     for scene in all_scenes:
         if scene in mipnerf360_outdoor_scenes:
@@ -75,25 +76,23 @@ def main():
             scene_type = "db"
         else:
             raise ValueError(f"Unknown scene {scene}")
-        
+
         scene_dir = os.path.join(base, scene)
         output_json = os.path.join(output_folder, scene + "_quality.json")
         output_json_per = os.path.join(output_folder, scene + "_quality_per.json")
         ps1_method_path = os.path.join(scene_dir, ps1_method_dir)
-    
-        render_command = f"python3 render.py -s {scene_dir} -m {ps1_method_path} --eval --skip_train --iteration {iterations}"
-        run_command(render_command)
 
+        render_command = f"python render.py -s {scene_dir} -m {ps1_method_path} --eval --skip_train --iteration {iterations}"
+        run_command(render_command)
 
         # second, measure the ps1  and fov quality
         ps1_imgs_path = os.path.join(ps1_method_path, "test", f"ours_{iterations}")
 
-        metrics_command = f"python3 quality_metrics.py -ps1 {ps1_imgs_path} -o {output_json} -o2 {output_json_per}"
+        metrics_command = f"python quality_metrics.py -ps1 {ps1_imgs_path} -o {output_json} -o2 {output_json_per}"
         run_command(metrics_command)
 
         # third, read from the jetson and add to m360_all, tat_all, db_all
 
+
 if __name__ == "__main__":
-
     main()
-

@@ -1,4 +1,8 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.4
 Name: diff-gaussian-rasterization-pcheck-obb-max
-Version: 0.0.0
+Version: 0.1.0
+Summary: A CUDA extension built with PyTorch and uv
+Requires-Python: >=3.12
 License-File: LICENSE.md
+Requires-Dist: torch>=2.0.0
+Dynamic: license-file
